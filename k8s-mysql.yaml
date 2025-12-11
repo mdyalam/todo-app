@@ -1,0 +1,58 @@
+# 1. The Request for Storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce # Only one node can mount this at a time
+  resources:
+    requests:
+      storage: 1Gi    # Request 1 Gigabyte of space
+---
+# 2. The Database Service (Same as before)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: mysql
+---
+# 3. The Database Deployment (Now with Storage!)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate # Important: Shuts down old DB before starting new one to prevent data corruption
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "rootpassword"
+        - name: MYSQL_DATABASE
+          value: "tododb"
+        ports:
+        - containerPort: 3306
+        # LINKING THE STORAGE TO THE CONTAINER
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      # DEFINING THE VOLUME
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim

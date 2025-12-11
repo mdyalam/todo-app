@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-app
+  # QUESTION: Apply Rolling Update Strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      # QUESTION: Apply imagePullSecrets
+      imagePullSecrets:
+      - name: my-registry-secret
+      containers:
+      - name: todo-app
+        # This matches the tag you built
+        image: mdyaseenalam/todo-app:v1
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: todo-app
+  ports:
+  - port: 80
+    targetPort: 8080
+    nodePort: 30001

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .main-card { 
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-top: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        h2 { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .search-container {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group input {
+            border: 2px solid #e9ecef;
+            border-radius: 12px 0 0 12px;
+            padding: 12px 20px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+        
+        .input-group .btn {
+            border-radius: 0;
+            padding: 12px 24px;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            border-left: none;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group .btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .input-group .btn-outline-secondary {
+            background: white;
+            color: #667eea;
+            border-color: #e9ecef;
+        }
+        
+        .input-group .btn-outline-secondary:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .input-group .btn-outline-danger {
+            border-radius: 0 12px 12px 0;
+            border-left: 2px solid #e9ecef;
+        }
+        
+        .add-task-form {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .add-task-form input {
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+        
+        .add-task-form input:focus {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+            outline: none;
+            background: white;
+        }
+        
+        .add-task-form input::placeholder {
+            color: #adb5bd;
+        }
+        
+        .add-task-form .btn-primary {
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 32px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .add-task-form .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            color: #764ba2;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state p {
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        
+        .list-group {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 24px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .list-group-item:hover {
+            background: #f8f9fa;
+            transform: translateX(4px);
+            box-shadow: -4px 0 0 #667eea;
+        }
+        
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-group-item span {
+            color: #2d3748;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+        }
+        
+        .btn-action {
+            width: 70px;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(250, 112, 154, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 24px;
+                margin-top: 20px;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .add-task-form {
+                padding: 16px;
+            }
+            
+            .btn-action {
+                width: 60px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 main-card">
+            <h2 class="text-center mb-4 fw-bold">✨ My Todo List</h2>
+
+            <div class="search-container">
+                <form action="/" method="get">
+                    <div class="input-group">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search tasks..." th:value="${keyword}">
+                        <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <a href="/" class="btn btn-outline-danger">Clear</a>
+                    </div>
+                </form>
+            </div>
+            
+            <form action="/add" method="post" class="d-flex gap-2 add-task-form">
+                <input type="text" name="task" class="form-control" placeholder="What needs to be done?" required>
+                <button type="submit" class="btn btn-primary fw-bold px-4">Add Task</button>
+            </form>
+
+            <div th:if="${todos.empty}" class="empty-state">
+                <p>No tasks found. Time to relax! ☕</p>
+            </div>
+
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center" th:each="todo : ${todos}">
+                    <span th:text="${todo.task}" class="fs-5">Task Name</span>
+                    <div>
+                        <a th:href="@{/edit/{id}(id=${todo.id})}" class="btn btn-sm btn-warning btn-action me-1 text-white">Edit</a>
+                        <a th:href="@{/delete/{id}(id=${todo.id})}" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Are you sure?')">Delete</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
