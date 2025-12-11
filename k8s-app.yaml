@@ -25,6 +25,7 @@ spec:
       - name: todo-app
         # This matches the tag you built
         image: mdyaseenalam/todo-app:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
 ---
